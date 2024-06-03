@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function switchMode() {
+            var mode = document.getElementById("viewMode").value;
+            var thumbnails = document.getElementById("thumbnails");
+            var list = document.getElementById("list");
+
+            if (mode === "Thumbnail mode") {
+                thumbnails.style.display = "block";
+                list.style.display = "none";
+            } else {
+                thumbnails.style.display = "none";
+                list.style.display = "block";
+            }
+        }
+
+        window.onload = function() {
+            switchMode(); // Ensure the default mode is set on page load
+        };
+    </script>
+</head>
+<body class="container">
+<h1 class="mt-4">Home</h1>
+{{ if .Success }}
+<div class="alert alert-success">
+    <p>{{ .Success }}</p>
+</div>
+{{ end }}
+<div class="my-4">
+    <img src="data:image/png;base64,{{ .QRCode }}" alt="QR Code" class="img-fluid">
+</div>
+<div class="mb-4">
+    <a href="{{ .UploadURL }}" class="btn btn-primary">Upload Files</a>
+</div>
+<div class="mb-4">
+    <select id="viewMode" class="form-control" onchange="switchMode()">
+        <option value="Thumbnail mode">Thumbnail mode</option>
+        <option value="List mode" selected>List mode</option>
+    </select>
+</div>
+<div id="thumbnails" class="row" style="display: none;">
+    <h2 class="col-12">Uploaded Files</h2>
+    {{ range .Files }}
+    <div class="col-6 col-md-4 col-lg-3 mb-4">
+        <a href="/image/{{ .Name }}">
+            <img src="/uploads/{{ .Name }}" alt="{{ .Name }}" class="img-thumbnail">
+        </a>
+        <p class="text-center">{{ .Name }}</p>
+    </div>
+    {{ else }}
+    <p class="col-12">No files uploaded yet.</p>
+    {{ end }}
+</div>
+<div id="list" style="display: block;">
+    <h2>Uploaded Files</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Size (MB)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ range .Files }}
+        <tr>
+            <td><a href="/image/{{ .Name }}">{{ .Name }}</a></td>
+            <td>{{ printf "%.2f" .Size }}</td>
+        </tr>
+        {{ else }}
+        <tr>
+            <td colspan="2">No files uploaded yet.</td>
+        </tr>
+        {{ end }}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
