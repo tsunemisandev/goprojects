@@ -32,6 +32,11 @@ func SetupRoutes(router *gin.Engine, uploadPath string) {
 	router.GET("/image/:filename", func(c *gin.Context) {
 		showImage(c, uploadPath)
 	})
+
+	// Handle file download
+	router.GET("/download/:filename", func(c *gin.Context) {
+		downloadFile(c, uploadPath)
+	})
 }
 
 func renderHomePage(c *gin.Context, uploadPath string) {
@@ -127,4 +132,17 @@ func showImage(c *gin.Context, uploadPath string) {
 		"ImageData": base64.StdEncoding.EncodeToString(fileBytes),
 		"Filename":  filename,
 	})
+}
+
+func downloadFile(c *gin.Context, uploadPath string) {
+	filename := c.Param("filename")
+	filePath := filepath.Join(uploadPath, filename)
+
+	// Check if file exists and is not a directory
+	if fileInfo, err := os.Stat(filePath); err != nil || fileInfo.IsDir() {
+		c.String(http.StatusNotFound, fmt.Sprintf("File not found: %v", err))
+		return
+	}
+
+	c.File(filePath)
 }

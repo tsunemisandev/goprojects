@@ -66,6 +66,7 @@
         <thead>
         <tr>
             <th>File Name</th>
+            <th></th>
             <th>Size (MB)</th>
         </tr>
         </thead>
@@ -73,6 +74,7 @@
         {{ range .Files }}
         <tr>
             <td><a href="/image/{{ .Name }}">{{ .Name }}</a></td>
+            <td><a href="/download/{{ .Name}}">Download</a></td>
             <td>{{ printf "%.2f" .Size }}</td>
         </tr>
         {{ else }}
